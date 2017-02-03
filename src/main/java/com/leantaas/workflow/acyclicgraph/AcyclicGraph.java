@@ -61,7 +61,7 @@ public class AcyclicGraph {
         if (root.equals(target)) {
             return true;
         }
-        if (visitedNodes.add(root)) { // contains
+        if (!visitedNodes.add(root)) { // contains
             return false;
         } else {  // visitedNodes originally does not contain, now contains
             for (GraphNode child : root.getChildNodes()) {
