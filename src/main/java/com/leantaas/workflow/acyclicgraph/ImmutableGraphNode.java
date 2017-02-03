@@ -57,8 +57,6 @@ public class ImmutableGraphNode extends GraphNode {
         }
         immutableChildNodes = ImmutableSet.copyOf(childNodes);
         immutableParentNodes = ImmutableSet.copyOf(parentNodes);
-        childNodes = null;
-        parentNodes = null;
         isSolidified = true;
     }
 

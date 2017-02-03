@@ -3,6 +3,7 @@ package com.leantaas.workflow.acyclicgraph;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Graph node is not stored in DB
@@ -11,13 +12,19 @@ import java.util.Set;
  */
 public class GraphNode {
 
+    private static AtomicInteger graphNodeIdRecord = new AtomicInteger(1);
+
     private final String graphNodeId;
 
     protected Set<GraphNode> parentNodes;
 
     protected Set<GraphNode> childNodes;
 
-    public GraphNode(String graphNodeIdParam) {
+    public GraphNode() {
+        this("graphNode : " + graphNodeIdRecord.getAndIncrement());
+    }
+
+    protected GraphNode(String graphNodeIdParam) {
         Objects.requireNonNull(graphNodeIdParam, "graphNodeIdParam should not be null");
         if (graphNodeIdParam.isEmpty()) {
             throw new IllegalArgumentException("graphNodeIdParam cannot be empty");
