@@ -1,6 +1,7 @@
 package com.leantaas.workflow.acyclicgraph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -82,7 +83,7 @@ public class WorkFlowGraphUtil {
         }
     }
 
-    public static List<GraphNode> edgesToNodes(List<GraphEdge> edges) {
+    public static List<GraphNode> edgesToNodes(Collection<? extends GraphEdge> edges) {
         if (edges == null || edges.isEmpty()) {
             throw new IllegalArgumentException("edges cannot be null or empty");
         }
@@ -98,7 +99,7 @@ public class WorkFlowGraphUtil {
         return new ArrayList<>(resSet);
     }
 
-    public static List<GraphEdge> NodesToEdges(List<GraphNode> nodes) {
+    public static List<GraphEdge> nodesToEdges(Collection<? extends GraphNode> nodes) {
         if (nodes == null || nodes.isEmpty()) {
             throw new IllegalArgumentException("nodes cannot be null or empty");
         }

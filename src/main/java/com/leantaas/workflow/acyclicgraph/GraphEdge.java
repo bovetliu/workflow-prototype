@@ -1,11 +1,14 @@
 package com.leantaas.workflow.acyclicgraph;
 
 
+import java.util.Objects;
+
 /**
  * GraphEdge is what will be persisted in database.
- * Created by boweiliu on 12/11/16.
+ * <p> GraphEdge has limited immutability, it can only guarantee two nodes on both sides of edge do not change. Can not
+ * guarantee topology beyond the edge does not change.
  */
-public class GraphEdge {
+public class GraphEdge implements Comparable<GraphEdge>{
 
     private final GraphNode fromNode;
 
@@ -46,5 +49,20 @@ public class GraphEdge {
         int result = fromNode.hashCode();
         result = 31 * result + toNode.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("edge: %10s -> %10s.", fromNode.getGraphNodeId(), toNode.getGraphNodeId());
+    }
+
+    @Override
+    public int compareTo(GraphEdge o) {
+        Objects.requireNonNull(o, "compareTo does not accept null argument");
+        int res = fromNode.getGraphNodeId().compareTo(o.getFromNode().getGraphNodeId());
+        if (res != 0) {
+            return res;
+        }
+        return toNode.getGraphNodeId().compareTo(o.toNode.getGraphNodeId());
     }
 }

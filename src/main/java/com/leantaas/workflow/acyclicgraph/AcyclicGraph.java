@@ -11,7 +11,11 @@ import java.util.Set;
  */
 public class AcyclicGraph {
 
-    private Set<GraphNode> nodes;
+    protected Set<? extends GraphNode> nodes;
+
+    protected AcyclicGraph() {
+
+    }
 
     public AcyclicGraph(List<GraphEdge> edges) {
         if (!WorkFlowGraphUtil.isAcyclic(edges)) {
@@ -20,7 +24,7 @@ public class AcyclicGraph {
         this.nodes = new HashSet<>(WorkFlowGraphUtil.edgesToNodes(edges));
     }
 
-    public Set<GraphNode> getNodes() {
+    public Set<? extends GraphNode> getNodes() {
         return nodes;
     }
 
@@ -29,7 +33,7 @@ public class AcyclicGraph {
         this.nodes = nodes;
     }
 
-    public HashSet<GraphNode> getEntryNode() {
+    public HashSet<? extends  GraphNode> getEntryNode() {
         HashSet<GraphNode> res = new HashSet<>();
         for (GraphNode graphNode : nodes) {
             if (graphNode.getParentNodes().isEmpty()) {
