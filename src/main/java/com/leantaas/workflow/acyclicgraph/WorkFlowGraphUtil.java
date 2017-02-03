@@ -2,31 +2,30 @@ package com.leantaas.workflow.acyclicgraph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * This class provide util, all static methods
  */
 public class WorkFlowGraphUtil {
+
     private WorkFlowGraphUtil() {
         // disable initialization
     }
 
     /**
-     *
-     *
      * @param edges a list of graphEdge
      * @return a list of entry nodes to the graph
      */
-    public static List<GraphNode> buildGraphFromEdges(List<GraphEdge> edges) {
+    public static List<GraphNode> buildAcyclicGraphFromEdges(List<GraphEdge> edges) {
         HashMap<GraphNode, Integer> inDegreeOf = new HashMap<>();
         // buildGraph
-        for (GraphEdge graphEdge :edges) {
+        for (GraphEdge graphEdge : edges) {
             GraphNode parentNode = graphEdge.getFromNode();
             GraphNode childNode = graphEdge.getToNode();
             parentNode.addChildNode(childNode);
@@ -69,5 +68,58 @@ public class WorkFlowGraphUtil {
             throw new IllegalStateException("the graph has cycle");
         }
         return potentialResult;
+    }
+
+    public static boolean isAcyclic(List<GraphEdge> edges) {
+        try {
+            buildAcyclicGraphFromEdges(edges);
+            return true;
+        } catch (IllegalStateException ise) {
+            if (ise.getMessage().equals("the graph has cycle")) {
+                return false;
+            }
+            throw ise;
+        }
+    }
+
+    public static List<GraphNode> edgesToNodes(List<GraphEdge> edges) {
+        if (edges == null || edges.isEmpty()) {
+            throw new IllegalArgumentException("edges cannot be null or empty");
+        }
+        HashSet<GraphNode> resSet = new HashSet<>();
+        for (GraphEdge graphEdge : edges) {
+            GraphNode parentNode = graphEdge.getFromNode();
+            GraphNode childNode = graphEdge.getToNode();
+            parentNode.addChildNode(childNode);
+            childNode.addParentNode(parentNode);
+            resSet.add(parentNode);
+            resSet.add(childNode);
+        }
+        return new ArrayList<>(resSet);
+    }
+
+    public static List<GraphEdge> NodesToEdges(List<GraphNode> nodes) {
+        if (nodes == null || nodes.isEmpty()) {
+            throw new IllegalArgumentException("nodes cannot be null or empty");
+        }
+        HashSet<GraphNode> visitedNodes = new HashSet<>();
+        List<GraphEdge> res = new ArrayList<>();
+        Queue<GraphNode> queue = new LinkedList<>();
+        for (GraphNode node : nodes) {
+            if (node.getParentNodes().isEmpty()) {
+                visitedNodes.add(node);
+                queue.offer(node);
+            }
+        }
+        while (!queue.isEmpty()) {
+            GraphNode parentNode = queue.poll();
+            for (GraphNode childNode : parentNode.getChildNodes()) {
+                if (visitedNodes.add(childNode)) {
+                    res.add(new GraphEdge(parentNode, childNode));
+                    queue.offer(childNode);
+                }
+            }
+        }
+        return res;
     }
 }

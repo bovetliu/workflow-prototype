@@ -14,7 +14,7 @@ public class TestWorkFlowGraphUtil {
 
 
     /**
-     * Scenario Description: the most common use case of buildGraphFromEdges
+     * Scenario Description: the most common use case of buildAcyclicGraphFromEdges
      */
     @Test
     public void testBuildGraphHappyPath01() {
@@ -41,7 +41,7 @@ public class TestWorkFlowGraphUtil {
         GraphEdge graphEdge10 = new GraphEdge(node8, node9);
 
 
-        List<GraphNode> entriesToGraph = WorkFlowGraphUtil.buildGraphFromEdges(Arrays.asList(graphEdge01, graphEdge02,
+        List<GraphNode> entriesToGraph = WorkFlowGraphUtil.buildAcyclicGraphFromEdges(Arrays.asList(graphEdge01, graphEdge02,
                 graphEdge03,
                 graphEdge04,
                 graphEdge05,
@@ -82,7 +82,7 @@ public class TestWorkFlowGraphUtil {
         GraphEdge graphEdge11 = new GraphEdge(node7, node2); // this will trigger exception
 
         // following execution will raise exception, since graphEdge11 will trigger exception.
-        List<GraphNode> entriesToGraph = WorkFlowGraphUtil.buildGraphFromEdges(Arrays.asList(graphEdge01, graphEdge02,
+        List<GraphNode> entriesToGraph = WorkFlowGraphUtil.buildAcyclicGraphFromEdges(Arrays.asList(graphEdge01, graphEdge02,
                 graphEdge03,
                 graphEdge04,
                 graphEdge05,
