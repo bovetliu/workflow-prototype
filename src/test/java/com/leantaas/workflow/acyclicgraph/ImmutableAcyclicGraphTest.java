@@ -45,6 +45,9 @@ public class ImmutableAcyclicGraphTest {
         Assert.assertEquals(graphEdgeList01.size(), graphEdgeList02.size());
         for (int i = 0; i < graphEdgeList01.size(); i++) {
             Assert.assertEquals(graphEdgeList01.get(i), graphEdgeList02.get(i));
+            // although nodeId is the same, but they are not same nodes
+            Assert.assertTrue(graphEdgeList01.get(i).getFromNode() !=  graphEdgeList02.get(i).getFromNode());
+            Assert.assertTrue(graphEdgeList01.get(i).getToNode() !=  graphEdgeList02.get(i).getToNode());
         }
     }
 }
