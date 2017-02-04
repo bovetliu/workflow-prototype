@@ -168,8 +168,8 @@ public class AcyclicGraphTraverseTest {
 
         @Override
         public void run() {
-            System.out.println(Thread.currentThread().getName() + "I am doing something heavy, I am fulfilling operation of"
-                    + "node :" + toBeVisitedNode.getGraphNodeId());
+            System.out.println(Thread.currentThread().getName() + " - I am doing something heavy, I am fulfilling "
+                    + "operation of node :" + toBeVisitedNode.getGraphNodeId());
             try {
                 Thread.sleep(3000L + random.nextInt(3000));
             } catch (InterruptedException e) {
