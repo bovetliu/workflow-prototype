@@ -26,7 +26,7 @@ public class ETLOperations {
             Thread.sleep(2000);
             System.out.println("insert into mirror, going to take 2s");
             Thread.sleep(2000);
-            System.out.println("finish processing.");
+            System.out.println("finish processing uploaded file.");
 
             //following block will be done by method interceptor
             OperationCompletionMessage processFileCompletion = new OperationCompletionMessage("processfileOperation");

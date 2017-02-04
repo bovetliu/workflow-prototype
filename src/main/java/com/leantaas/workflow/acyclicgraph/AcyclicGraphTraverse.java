@@ -58,12 +58,14 @@ public class AcyclicGraphTraverse {
         if (isThisParentNodeVisited) {
             // one distributed message queue might deliver message at least once, when one message is delivered more
             // than once, should not trigger downstream visiting again.
+            hashMapLock.unlock();
             return res;
         }
         visitedMap.put(graphNode, true);  // visit this node
         visitedNodeNumber.incrementAndGet();
         Set<GraphNode> childNodes = graphNode.getChildNodes();
         if (childNodes.isEmpty()) {
+            hashMapLock.unlock();
             return res;
         }
 
@@ -98,5 +100,10 @@ public class AcyclicGraphTraverse {
         }
         return true;
     }
+
+    public ImmutableAcyclicGraph getImmutableAcyclicGraph() {
+        return immutableAcyclicGraph;
+    }
+
 
 }
