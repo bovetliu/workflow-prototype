@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -37,7 +36,7 @@ public class App {
         return new GraphEdge(graphNodeList.get(fromId), graphNodeList.get(toId));
     }
 
-    public static AcyclicGraphTraverse buildWorkFlow() {
+    private static AcyclicGraphTraverse buildWorkFlow() {
         List<GraphNode> graphNodesList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             graphNodesList.add(new GraphNode());
@@ -100,7 +99,7 @@ public class App {
         }
     }
 
-    private static final String FILE_OP_METHOD_NAME  = "processfileOperation";
+    private static final String FILE_OP_METHOD_NAME = "processfileOperation";
     private static final String COMPUTE_HUDDLE_OP_METHOD_NAME = "computeHuddleVolumeOperation";
 
     public static void main(String[] args) {
@@ -112,7 +111,7 @@ public class App {
         ETLOperations etlOperations = new ETLOperations(kinesis);
         MetricsOperations metricsOperations = new MetricsOperations(kinesis);
 
-        // scan annotations and build association between operation name and method
+        // TODO scan annotations and build association between operation name and method
         final Map<String, Entry<Object, Method>> nodeIdVsMethodEntry = new HashMap<>();
         Class<?>[] parameterTypes = new Class[]{OperationCompletionMessage.class};
         try {
@@ -135,50 +134,51 @@ public class App {
                 oneWorkFlowRun.getImmutableAcyclicGraph());
 
         HashBiMap<String, String> operationNameResolveToNode = HashBiMap.create();
+
+        /*
+        * TODO Following update on operationNameResolveToNode will be done by class in operationassociation class,
+        * TODO information should be fetched from workflow arrangement table
+        * */
         operationNameResolveToNode.put("fileUploadCompletion", "graphNode : 1");
         operationNameResolveToNode.put(FILE_OP_METHOD_NAME, "graphNode : 2");
         operationNameResolveToNode.put(COMPUTE_HUDDLE_OP_METHOD_NAME, "graphNode : 3");
-
         System.out.println("operation name binding to work flow completed.");
 
+        // Simulate file upload at 4th second
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.out.println("finished uploading file to s3!");
-                    OperationCompletionMessage fileUploadCompletion = new OperationCompletionMessage(
-                            "fileUploadCompletion");
-                    fileUploadCompletion.put("tenantName", "uchealth");
-                    fileUploadCompletion.put("s3Url", "s3://abcdefghigjlimn12312313.awss3url.amazon.com");
-                    kinesis.put(fileUploadCompletion);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
+        scheduledExecutorService.schedule(() -> {
+            try {
+                System.out.println("finished uploading file to s3!");
+                OperationCompletionMessage fileUploadCompletion = new OperationCompletionMessage(
+                        "fileUploadCompletion");
+                fileUploadCompletion.put("tenantName", "uchealth");
+                fileUploadCompletion.put("s3Url", "s3://abcdefghigjlimn12312313.awss3url.amazon.com");
+                kinesis.put(fileUploadCompletion);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }, 4, TimeUnit.SECONDS);
 
-        scheduledExecutorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("finish execution");
-                for (GraphNode graphNode : oneWorkFlowRun.getImmutableAcyclicGraph().getNodes()) {
-                    oneWorkFlowRun.visit(graphNode);
-                }
-                if (!oneWorkFlowRun.finishedTraverse()) {
-                    throw new IllegalStateException("oneWorkFlow should already finished traversing");
-                }
-                try {
-                    kinesis.put(new OperationCompletionMessage("avoid_kinesis_take()_block"));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
+        // finish execution at 15 second
+        scheduledExecutorService.schedule(() -> {
+            System.out.println("finish execution");
+            for (GraphNode graphNode : oneWorkFlowRun.getImmutableAcyclicGraph().getNodes()) {
+                oneWorkFlowRun.visit(graphNode);
+            }
+            if (!oneWorkFlowRun.finishedTraverse()) {
+                throw new IllegalStateException("oneWorkFlow should already finished traversing");
+            }
+            try {
+                kinesis.put(new OperationCompletionMessage("avoid_kinesis_take()_block"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }, 15, TimeUnit.SECONDS);
-        AtomicInteger operationInvoked = new AtomicInteger();
+
+        // simulate workflow running
         try {
             while (!oneWorkFlowRun.finishedTraverse()) {
                 OperationCompletionMessage operationCompletionMessage = kinesis.take();
@@ -212,6 +212,8 @@ public class App {
         } catch (InterruptedException interruptedEx) {
             throw new RuntimeException(interruptedEx);
         }
+
+        //close exeuctors
         scheduledExecutorService.shutdown();
         fixedThreadPool.shutdown();
     }
