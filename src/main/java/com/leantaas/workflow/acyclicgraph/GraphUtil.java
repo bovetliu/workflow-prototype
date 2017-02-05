@@ -13,9 +13,9 @@ import java.util.Set;
 /**
  * This class provide util, all static methods
  */
-public class WorkFlowGraphUtil {
+public class GraphUtil {
 
-    private WorkFlowGraphUtil() {
+    private GraphUtil() {
         // disable initialization
     }
 
