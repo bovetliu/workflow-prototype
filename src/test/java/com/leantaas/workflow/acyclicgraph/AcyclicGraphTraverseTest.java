@@ -8,15 +8,22 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by boweiliu on 2/3/17.
+ *
  */
 public class AcyclicGraphTraverseTest {
 
 
+    public static ImmutableAcyclicGraph quickBuildOneGraph() {
+        List<GraphNode> listOfNodes = IntStream.range(0, 20).mapToObj(i -> new GraphNode())
+                .collect(Collectors.toList());
+        return AcyclicGraphTraverseTest.quickBuildOneGraph(listOfNodes);
+    }
 
      public static ImmutableAcyclicGraph quickBuildOneGraph(List<GraphNode> graphNodesList) {
         if (graphNodesList.size() != 20) {

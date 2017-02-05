@@ -109,7 +109,7 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
         boolean alreadyMatched = false;
         for (OperationCompletionMessage op : msgsOfParents.values()) {
             for (Parameter parameter : parameters) {
-                if (parameter.isAnnotationPresent(ReturnedFrom.class)) {
+                if (parameter.getAnnotation(ReturnedFrom.class) != null) {
                     continue;
                 }
                 // now parameter is not annotated by @ReturnFrom
@@ -130,9 +130,19 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
             Parameter candidateParam = parameters[i];
             ReturnedFrom returnedFrom = candidateParam.getAnnotation(ReturnedFrom.class);
             if (returnedFrom != null) {
-                result[i] = Preconditions.checkNotNull(msgsOfParents.get(returnedFrom.operationName()),
+                OperationCompletionMessage msg = Preconditions
+                        .checkNotNull(msgsOfParents.get(returnedFrom.operationName()),
                         String.format("annotated return-from operation \"%s\" is not among upstream operations of "
                                 + "this operation", returnedFrom.operationName()));
+                if (!candidateParam.getType().isAssignableFrom(msg.getReturnClazz())) {
+                    String unableToAssign = String.format("Operation \"%s\" returned %s, which cannot be assigned to "
+                            + "type \"%s\".",
+                            msg.getOperationName(),
+                            msg.getReturnClazz().getName(),
+                            candidateParam.getType().getName());
+                    throw new IllegalArgumentException(unableToAssign);
+                }
+                result[i] = msg.getReturnedObject();
                 msgsOfParents.remove(returnedFrom.operationName());
             } else {
                 // have to match one by one.
