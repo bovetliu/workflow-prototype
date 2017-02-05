@@ -129,7 +129,7 @@ public class AcyclicGraphTraverseTest {
 
         int count = 0;
         // our work flow started consuming kinesis
-        while (!acyclicGraphTraverse.finishedTraverse()) {
+        while (!acyclicGraphTraverse.isTraverseFinished()) {
             GraphNode oneTaskCompletion = kinesis.take();
             List<GraphNode> nextExecutableOperations = acyclicGraphTraverse.visit(oneTaskCompletion);
             for (GraphNode oneOperation : nextExecutableOperations) {

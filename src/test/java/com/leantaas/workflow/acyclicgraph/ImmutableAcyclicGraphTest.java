@@ -34,12 +34,12 @@ public class ImmutableAcyclicGraphTest {
                 graphEdge03,
                 graphEdge04,
                 graphEdge05));
-        List<GraphEdge> graphEdgeList01 = WorkFlowGraphUtil.nodesToEdges(immutableAcyclicGraph01.getNodes());
+        List<GraphEdge> graphEdgeList01 = GraphUtil.nodesToEdges(immutableAcyclicGraph01.getNodes());
         Collections.sort(graphEdgeList01);
 
 
         ImmutableAcyclicGraph immutableAcyclicGraph02 = new ImmutableAcyclicGraph(immutableAcyclicGraph01);
-        List<GraphEdge> graphEdgeList02 = WorkFlowGraphUtil.nodesToEdges(immutableAcyclicGraph02.getNodes());
+        List<GraphEdge> graphEdgeList02 = GraphUtil.nodesToEdges(immutableAcyclicGraph02.getNodes());
         Collections.sort(graphEdgeList02);
 
         Assert.assertEquals(graphEdgeList01.size(), graphEdgeList02.size());

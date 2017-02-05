@@ -168,7 +168,7 @@ public class App {
             for (GraphNode graphNode : oneWorkFlowRun.getImmutableAcyclicGraph().getNodes()) {
                 oneWorkFlowRun.visit(graphNode);
             }
-            if (!oneWorkFlowRun.finishedTraverse()) {
+            if (!oneWorkFlowRun.isTraverseFinished()) {
                 throw new IllegalStateException("oneWorkFlow should already finished traversing");
             }
             kinesis.put(new OperationCompletionMessage("avoid_kinesis_take()_block", String.class, "dummy content"));
@@ -176,7 +176,7 @@ public class App {
 
         // simulate workflow running
 
-        while (!oneWorkFlowRun.finishedTraverse()) {
+        while (!oneWorkFlowRun.isTraverseFinished()) {
             OperationCompletionMessage operationCompletionMessage = kinesis.take();
             System.out.println("[Operation Completion Received] " + operationCompletionMessage.getOperationName() + " completion received\n");
             Optional<ImmutableGraphNode> associatedNodeOptional = associateMsgToNode(

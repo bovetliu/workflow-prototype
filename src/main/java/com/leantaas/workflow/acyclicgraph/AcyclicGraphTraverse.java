@@ -34,7 +34,7 @@ public class AcyclicGraphTraverse {
         }
     }
 
-    public boolean finishedTraverse() {
+    public boolean isTraverseFinished() {
         hashMapLock.lock();
         boolean res = visitedNodeNumber.get() == visitedMap.size();
         hashMapLock.unlock();

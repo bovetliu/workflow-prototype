@@ -18,10 +18,10 @@ public class AcyclicGraph {
     }
 
     public AcyclicGraph(List<GraphEdge> edges) {
-        if (!WorkFlowGraphUtil.isAcyclic(edges)) {
+        if (!GraphUtil.isAcyclic(edges)) {
             throw new IllegalArgumentException("edgeList cannot form an acyclic graph");
         }
-        this.nodes = new HashSet<>(WorkFlowGraphUtil.edgesToNodes(edges));
+        this.nodes = new HashSet<>(GraphUtil.edgesToNodes(edges));
     }
 
     public Set<? extends GraphNode> getNodes() {

@@ -13,10 +13,10 @@ public class ImmutableAcyclicGraph extends AcyclicGraph {
 
     public ImmutableAcyclicGraph(List<GraphEdge> edges) {
         super();  // for readability, I am explicitly invoking one default protected constructor
-        if (!WorkFlowGraphUtil.isAcyclic(edges)) {
+        if (!GraphUtil.isAcyclic(edges)) {
             throw new IllegalArgumentException("edgeList cannot form an acyclic graph");
         }
-        List<GraphNode> tempGraphNodes = WorkFlowGraphUtil.edgesToNodes(edges);
+        List<GraphNode> tempGraphNodes = GraphUtil.edgesToNodes(edges);
         ImmutableSet.Builder<ImmutableGraphNode> builder = ImmutableSet.builder();
         HashMap<String, ImmutableGraphNode> clonedMap = new HashMap<>();
         for (GraphNode graphNode : tempGraphNodes) {
