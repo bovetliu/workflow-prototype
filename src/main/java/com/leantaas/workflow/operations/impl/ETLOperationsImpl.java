@@ -40,7 +40,7 @@ public class ETLOperationsImpl implements ETLOperations {
      */
     @Override
     @WorkflowOperation
-    public String processfileOperation(FileUploadCompletionDTO fileUploadCompletionDTO) {
+    public String processFileOperation(FileUploadCompletionDTO fileUploadCompletionDTO) {
         System.out.println(String.format("processing file uploaded by %s at url %s ",
                 fileUploadCompletionDTO.getTenantName(), fileUploadCompletionDTO.getFileS3Url()));
         String tenantName = fileUploadCompletionDTO.getTenantName();

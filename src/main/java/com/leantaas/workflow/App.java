@@ -22,7 +22,7 @@ public class App {
 
 
     private static final String UPLOAD_FILE_OPERATION = "uploadFileOperation";
-    private static final String PROCESS_FILE_OPERATION = "processfileOperation";
+    private static final String PROCESS_FILE_OPERATION = "processFileOperation";
     private static final String COMPUTE_HUDDLE_OP_METHOD_NAME = "computeHuddleVolumeOperation";
 
 

@@ -9,5 +9,5 @@ public interface ETLOperations {
 
     FileUploadCompletionDTO uploadFileOperation(String fileName);
 
-    String processfileOperation(FileUploadCompletionDTO fileUploadCompletionDTO);
+    String processFileOperation(FileUploadCompletionDTO fileUploadCompletionDTO);
 }
