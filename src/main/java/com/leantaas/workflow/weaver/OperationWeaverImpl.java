@@ -1,5 +1,6 @@
 package com.leantaas.workflow.weaver;
 
+import com.amazonaws.util.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
@@ -7,35 +8,33 @@ import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.leantaas.workflow.acyclicgraph.GraphEdge;
 import com.leantaas.workflow.acyclicgraph.GraphNode;
 import com.leantaas.workflow.acyclicgraph.ImmutableAcyclicGraph;
 import com.leantaas.workflow.annotation.WorkflowOperation;
 import com.leantaas.workflow.guicemodule.WorkflowModule;
 import com.leantaas.workflow.operations.dto.OperationCompletionMessage;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 /**
  * This class is default implementation
  */
 @Singleton
-public class OperationWeaverImpl {
+public class OperationWeaverImpl implements OperationWeaver {
 
-    private HashBiMap<String, SimpleEntry<Object, Method>> operationNameVsObjMethodEntry;
+    private final HashBiMap<String, SimpleEntry<Object, Method>> operationNameVsObjMethodEntry;
 
-    private HashBiMap<String, GraphNode> operationNameVsGraphNode;
+    private final HashBiMap<String, GraphNode> operationNameVsGraphNode;
 
-    private ImmutableAcyclicGraph immutableAcyclicGraph;
+    private final ImmutableAcyclicGraph immutableAcyclicGraph;
 
     private final Injector injector;
 
@@ -45,9 +44,8 @@ public class OperationWeaverImpl {
             throw new IllegalArgumentException("workflow arrangement should not be null or empty");
         }
 
-        List<GraphEdge> graphEdgeList = workflowArrangementEntryList.stream().map(WorkflowArrangementEntry::toGraphEdge)
-                .collect(Collectors.toList());
-        immutableAcyclicGraph = new ImmutableAcyclicGraph(graphEdgeList);
+        immutableAcyclicGraph = new ImmutableAcyclicGraph(
+                WorkflowArrangementEntry.toGraphEdges(workflowArrangementEntryList));
         operationNameVsGraphNode = HashBiMap.create();
         for (GraphNode graphNode : immutableAcyclicGraph.getNodes()) {
             operationNameVsGraphNode.put(graphNode.getGraphNodeId(), graphNode);
@@ -65,11 +63,12 @@ public class OperationWeaverImpl {
                 Class<?> opClazz = classInfo.load();
                 Map<String, Method> tempMapStoringAnnotatedMethods = new TreeMap<>();
                 for (Method method : opClazz.getDeclaredMethods()) {
-                    WorkflowOperation workflowOperationAnnotationInstance
+                    WorkflowOperation wfOpAnnotation
                             = method.getAnnotation(WorkflowOperation.class);
-                    if (workflowOperationAnnotationInstance != null) {
-                        System.out.println("annotated method : " + method.getName());
-                        tempMapStoringAnnotatedMethods.put(workflowOperationAnnotationInstance.operationName(), method);
+                    if (wfOpAnnotation != null) {
+                        String operationName = StringUtils.isNullOrEmpty(wfOpAnnotation.operationName()) ?
+                                method.getName() : wfOpAnnotation.operationName();
+                        tempMapStoringAnnotatedMethods.put(operationName, method);
                     }
                 }
                 // this class has WorkflowOperation annotated methods
@@ -78,6 +77,7 @@ public class OperationWeaverImpl {
                     for (Map.Entry<String, Method> opNameMethodEntry : tempMapStoringAnnotatedMethods.entrySet()) {
                         String operationName = opNameMethodEntry.getKey();
                         Method annotatedMethod = opNameMethodEntry.getValue();
+                        System.out.println("put into operationNameVsObjMethodEntry : " + operationName);
                         operationNameVsObjMethodEntry.put(operationName,
                                 new AbstractMap.SimpleEntry<>(object, annotatedMethod));
                     }
@@ -91,10 +91,12 @@ public class OperationWeaverImpl {
         }
     }
 
+    @Override
     public Injector getInjector() {
         return injector;
     }
 
+    @Override
     public ImmutableAcyclicGraph getImmutableAcyclicGraph() {
         return immutableAcyclicGraph;
     }
@@ -107,27 +109,34 @@ public class OperationWeaverImpl {
         return operationNameVsGraphNode;
     }
 
+    @Override
+    public WorkflowTraverse createTraverse(String tenantCode, LocalDate localDate) {
+        return new WorkflowTraverse(immutableAcyclicGraph, tenantCode, localDate);
+    }
+
+    @Override
     public void proceedTraverse(WorkflowTraverse traverse, OperationCompletionMessage completionMsg,
             ExecutorService threadPool) {
 
         GraphNode correspondingNodeOfMsg = Preconditions.checkNotNull(
-                operationNameVsGraphNode.get(completionMsg.getOperationName()),"Unable to find corresponding "
+                operationNameVsGraphNode.get(completionMsg.getOperationName()), "Unable to find corresponding "
                         + "graphNode of this operation completion message :" + completionMsg.getOperationName());
         List<GraphNode> nextStepNodes = traverse.visit(correspondingNodeOfMsg, completionMsg);
+
         for (GraphNode nextStepNode : nextStepNodes) {
             // ATTENTION graphNodeId is operation name, which guaranteed in previous logic
             AbstractMap.SimpleEntry<Object, Method> objectMethod =
                     operationNameVsObjMethodEntry.get(nextStepNode.getGraphNodeId());
             if (objectMethod == null) {
                 throw new NullPointerException("Cannot find corresponding using operation name : " +
-                        nextStepNode.getGraphNodeId() + ", which is also a graphNodeId");
+                        nextStepNode.getGraphNodeId() + ", which is also a graphNodeId.");
             }
             Object thisObject = objectMethod.getKey();
             Method method = objectMethod.getValue();
             threadPool.submit(() -> {
                 try {
                     method.invoke(thisObject, traverse.determineArgsOf(method, nextStepNode));
-                } catch (IllegalAccessException | InvocationTargetException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }

@@ -27,7 +27,7 @@ public class OperationCompletionReporter implements MethodInterceptor {
         Class<?> returnClazz = method.getReturnType();
         System.out.println(
                 "[Invocation Intercepting] operation completion reporting for " + simpleClassName + "." + method
-                        .getName() + "(...)");
+                        .getName() + "(...)\n");
         OperationCompletionMessage msg = new OperationCompletionMessage(operationName, returnClazz, res);
         fakeKinesis.put(msg);
         return res;

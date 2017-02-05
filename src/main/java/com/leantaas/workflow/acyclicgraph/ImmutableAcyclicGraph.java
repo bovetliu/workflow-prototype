@@ -13,18 +13,21 @@ public class ImmutableAcyclicGraph extends AcyclicGraph {
 
     public ImmutableAcyclicGraph(List<GraphEdge> edges) {
         super();  // for readability, I am explicitly invoking one default protected constructor
+        List<GraphNode> tempGraphNodes = GraphUtil.edgesToNodes(edges);
         if (!GraphUtil.isAcyclic(edges)) {
             throw new IllegalArgumentException("edgeList cannot form an acyclic graph");
         }
-        List<GraphNode> tempGraphNodes = GraphUtil.edgesToNodes(edges);
         ImmutableSet.Builder<ImmutableGraphNode> builder = ImmutableSet.builder();
         HashMap<String, ImmutableGraphNode> clonedMap = new HashMap<>();
         for (GraphNode graphNode : tempGraphNodes) {
             ImmutableGraphNode cloned = cloneNode(graphNode, clonedMap);
-            cloned.solidify();
             builder.add(cloned);
         }
-        super.nodes = builder.build();
+        ImmutableSet<ImmutableGraphNode> tempImmutableNodeSet = builder.build();
+        for (ImmutableGraphNode immutableGraphNode : tempImmutableNodeSet) {
+            immutableGraphNode.solidify();
+        }
+        super.nodes = tempImmutableNodeSet;
     }
 
     public ImmutableAcyclicGraph(AcyclicGraph acyclicGraph) {

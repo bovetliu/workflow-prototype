@@ -3,12 +3,24 @@ package com.leantaas.workflow.weaver;
 import com.amazonaws.util.StringUtils;
 import com.leantaas.workflow.acyclicgraph.GraphEdge;
 import com.leantaas.workflow.acyclicgraph.GraphNode;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class WorkflowArrangementEntry {
 
     private String upstreamOperationName;
 
     private String downstreamOperationName;
+
+    public WorkflowArrangementEntry(String upstreamOperationNameParam, String downstreamOperationNameParam) {
+        upstreamOperationName = upstreamOperationNameParam;
+        downstreamOperationName = downstreamOperationNameParam;
+    }
 
     public String getUpstreamOperationName() {
         return upstreamOperationName;
@@ -32,7 +44,17 @@ public class WorkflowArrangementEntry {
         this.downstreamOperationName = downstreamOperationName;
     }
 
-    public GraphEdge toGraphEdge() {
-        return new GraphEdge(new GraphNode(upstreamOperationName), new GraphNode(downstreamOperationName));
+    @SuppressWarnings("Convert2MethodRef")
+    public static List<GraphEdge> toGraphEdges(Collection<WorkflowArrangementEntry> wfEntries) {
+        Map<String, GraphNode> opnameVsNode = new TreeMap<>();
+        Set<GraphEdge> res = new HashSet<>();
+        for (WorkflowArrangementEntry entry : wfEntries) {
+            GraphNode fromNode = opnameVsNode.computeIfAbsent(entry.upstreamOperationName, upstreamOperationName ->
+                    new GraphNode(upstreamOperationName));
+            GraphNode toNode = opnameVsNode.computeIfAbsent(entry.downstreamOperationName, downstreamOperationName ->
+                    new GraphNode(downstreamOperationName));
+            res.add(new GraphEdge(fromNode, toNode));
+        }
+        return new ArrayList<>(res);
     }
 }

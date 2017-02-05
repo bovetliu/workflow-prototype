@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -23,12 +24,13 @@ import java.util.stream.Collectors;
  */
 public class WorkflowTraverse extends AcyclicGraphTraverse {
 
+    private final UUID traveseId;
+
     private final String tenantCode;
 
     private final LocalDate localDate;
 
     private final Map<String, OperationCompletionMessage> operationCompletionMap;
-
 
     @VisibleForTesting
     WorkflowTraverse(ImmutableAcyclicGraph fakeImmutableAcyclicGraph) {
@@ -36,10 +38,11 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
         tenantCode = "onlyForTest";
         localDate = LocalDate.MIN;
         operationCompletionMap = null;
+        traveseId = UUID.fromString("efbjunit-a240-4802-82da-ded3a771a234");
     }
 
     // this constructor should only be used package
-    public WorkflowTraverse(ImmutableAcyclicGraph immutableAcyclicGraphParam, String tenantCodeParam,
+    WorkflowTraverse(ImmutableAcyclicGraph immutableAcyclicGraphParam, String tenantCodeParam,
             LocalDate localDateParam) {
         super(immutableAcyclicGraphParam);
 
@@ -49,8 +52,8 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
         Objects.requireNonNull(localDateParam, "localDate parameter cannot be null");
         tenantCode = tenantCodeParam;
         localDate = localDateParam;
-
         operationCompletionMap = new HashMap<>();
+        traveseId = UUID.randomUUID();
     }
 
     public String getTenantCode() {
@@ -181,7 +184,8 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
             return operationCompletionMessageOptional.get();
         }).filter(msg -> !msg.getReturnClazz().equals( Void.TYPE)).collect(Collectors.toMap(
                 OperationCompletionMessage::getOperationName, msg -> msg));
-        return determineArgsOf(method, msgsOfParents);
+        Object[] res =  determineArgsOf(method, msgsOfParents);
+        return res;
     }
 
     @Override
@@ -195,16 +199,20 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
 
         WorkflowTraverse that = (WorkflowTraverse) o;
 
-        if (tenantCode != null ? !tenantCode.equals(that.tenantCode) : that.tenantCode != null) {
+        if (!traveseId.equals(that.traveseId)) {
             return false;
         }
-        return localDate != null ? localDate.equals(that.localDate) : that.localDate == null;
+        if (!tenantCode.equals(that.tenantCode)) {
+            return false;
+        }
+        return localDate.equals(that.localDate);
     }
 
     @Override
     public int hashCode() {
-        int result = tenantCode != null ? tenantCode.hashCode() : 0;
-        result = 31 * result + (localDate != null ? localDate.hashCode() : 0);
+        int result = traveseId.hashCode();
+        result = 31 * result + tenantCode.hashCode();
+        result = 31 * result + localDate.hashCode();
         return result;
     }
 

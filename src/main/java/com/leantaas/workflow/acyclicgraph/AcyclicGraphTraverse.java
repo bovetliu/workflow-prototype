@@ -44,6 +44,7 @@ public class AcyclicGraphTraverse {
 
     /**
      * //TODO(bowei), need to change this method to be O(|E|), for now it is O(|E| ^ 2)
+     *
      * @param graphNode visit one node
      * @return next visitable nodes.
      */
@@ -52,31 +53,32 @@ public class AcyclicGraphTraverse {
         if (!immutableAcyclicGraph.isInGraph(graphNode)) {
             throw new IllegalArgumentException(graphNode.getGraphNodeId() + " is not in this acyclic graph");
         }
-        hashMapLock.lock();
-        Boolean isThisParentNodeVisited = Preconditions.checkNotNull(visitedMap.get(graphNode),
-                "Program logic error, this node is not in visitedMap");
-        List<GraphNode> res = new ArrayList<>();
-        if (isThisParentNodeVisited) {
-            // one distributed message queue might deliver message at least once, when one message is delivered more
-            // than once, should not trigger downstream visiting again.
-            hashMapLock.unlock();
-            return res;
-        }
-        visitedMap.put(graphNode, true);  // visit this node
-        visitedNodeNumber.incrementAndGet();
-        Set<GraphNode> childNodes = graphNode.getChildNodes();
-        if (childNodes.isEmpty()) {
-            hashMapLock.unlock();
-            return res;
-        }
-
-        for (GraphNode child : childNodes) {
-            if (parentsAllVisited(child)) {
-                res.add(child);
+        try {
+            hashMapLock.lock();
+            Boolean isThisParentNodeVisited = Preconditions.checkNotNull(visitedMap.get(graphNode),
+                    "Program logic error, this node is not in visitedMap");
+            List<GraphNode> res = new ArrayList<>();
+            if (isThisParentNodeVisited) {
+                // one distributed message queue might deliver message at least once, when one message is delivered more
+                // than once, should not trigger downstream visiting again.
+                return res;
             }
+            visitedMap.put(graphNode, true);  // visit this node
+            visitedNodeNumber.incrementAndGet();
+            Set<GraphNode> childNodes = graphNode.getChildNodes();
+            if (childNodes.isEmpty()) {
+                return res;
+            }
+
+            for (GraphNode child : childNodes) {
+                if (parentsAllVisited(child)) {
+                    res.add(child);
+                }
+            }
+            return res;
+        } finally {
+            hashMapLock.unlock();
         }
-        hashMapLock.unlock();
-        return res;
     }
 
     public ImmutableMap<GraphNode, Boolean> copyVisitedMapToImmutableMap() {
