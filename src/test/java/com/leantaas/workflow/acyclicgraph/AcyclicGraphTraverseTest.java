@@ -18,7 +18,7 @@ public class AcyclicGraphTraverseTest {
 
 
 
-    private ImmutableAcyclicGraph quickBuildOneGraph(List<GraphNode> graphNodesList) {
+     public static ImmutableAcyclicGraph quickBuildOneGraph(List<GraphNode> graphNodesList) {
         if (graphNodesList.size() != 20) {
             throw new IllegalArgumentException("only accept size 20 node list");
         }
@@ -148,7 +148,7 @@ public class AcyclicGraphTraverseTest {
         workerFlowWorkers.shutdown();
     }
 
-    private GraphEdge link(List<GraphNode> graphNodeList, int fromId, int toId) {
+    private static GraphEdge link(List<GraphNode> graphNodeList, int fromId, int toId) {
         return new GraphEdge(graphNodeList.get(fromId), graphNodeList.get(toId));
     }
 
