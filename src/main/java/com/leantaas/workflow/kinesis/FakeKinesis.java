@@ -6,13 +6,12 @@ import java.util.concurrent.BlockingQueue;
 import javax.inject.Singleton;
 
 /**
- * just wrap one ArrayBlockingQueue has type parameter as {@link OperationCompletionMessage}
+ * just wrap one ArrayBlockingQueue has type parameter {@link OperationCompletionMessage}
  */
 @Singleton
 public class FakeKinesis {
 
     public FakeKinesis() {
-        System.out.println("Initializing fake kinesis.");
     }
 
     private BlockingQueue<OperationCompletionMessage> blockingQueue
