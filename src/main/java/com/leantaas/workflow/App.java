@@ -186,8 +186,8 @@ public class App {
             }
             ImmutableGraphNode immutableGraphNode = associatedNodeOptional.get();
             List<GraphNode> nextExecutableNodes = oneWorkFlowRun.visit(immutableGraphNode);
-            for (GraphNode nextOperation : nextExecutableNodes) {
-                Entry<Object, Method> objectMethodEntry = nodeIdVsMethodEntry.get(nextOperation.getGraphNodeId());
+            for (GraphNode nextOperationNode : nextExecutableNodes) {
+                Entry<Object, Method> objectMethodEntry = nodeIdVsMethodEntry.get(nextOperationNode.getGraphNodeId());
                 if (objectMethodEntry == null) {
                     continue;
                 }
