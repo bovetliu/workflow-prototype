@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 public @interface WorkflowOperation {
 
     // if operationName is not defined, then method name will be operation name
-    public String operationName() default "";
+    String operationName() default "";
 
 }

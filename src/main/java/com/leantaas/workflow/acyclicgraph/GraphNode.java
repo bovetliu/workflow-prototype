@@ -24,7 +24,7 @@ public class GraphNode {
         this("graphNode : " + graphNodeIdRecord.getAndIncrement());
     }
 
-    protected GraphNode(String graphNodeIdParam) {
+    public GraphNode(String graphNodeIdParam) {
         Objects.requireNonNull(graphNodeIdParam, "graphNodeIdParam should not be null");
         if (graphNodeIdParam.isEmpty()) {
             throw new IllegalArgumentException("graphNodeIdParam cannot be empty");
