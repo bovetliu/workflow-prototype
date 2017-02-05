@@ -20,6 +20,7 @@ public class AcyclicGraphTraverse {
 
     protected final ImmutableAcyclicGraph immutableAcyclicGraph;
 
+    // TODO (bowei) should change to HashMap<GraphNode, STATUS>  STATUS is Enum : VISITED, UNVISITED, ERROR
     protected final HashMap<GraphNode, Boolean> visitedMap;
 
     protected final AtomicInteger visitedNodeNumber = new AtomicInteger();
