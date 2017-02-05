@@ -43,7 +43,7 @@ public class AcyclicGraphTraverse {
     }
 
     /**
-     *
+     * //TODO(bowei), need to change this method to be O(|E|), for now it is O(|E| ^ 2)
      * @param graphNode visit one node
      * @return next visitable nodes.
      */

@@ -31,7 +31,7 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
 
 
     @VisibleForTesting
-    public WorkflowTraverse(ImmutableAcyclicGraph fakeImmutableAcyclicGraph) {
+    WorkflowTraverse(ImmutableAcyclicGraph fakeImmutableAcyclicGraph) {
         super(fakeImmutableAcyclicGraph);
         tenantCode = "onlyForTest";
         localDate = LocalDate.MIN;
@@ -60,8 +60,6 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
     public LocalDate getLocalDate() {
         return localDate;
     }
-
-
 
     public Optional<OperationCompletionMessage> getResultOfOperation(String operationName) {
         OperationCompletionMessage msg = operationCompletionMap.get(operationName);
@@ -132,8 +130,8 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
             if (returnedFrom != null) {
                 OperationCompletionMessage msg = Preconditions
                         .checkNotNull(msgsOfParents.get(returnedFrom.operationName()),
-                        String.format("annotated return-from operation \"%s\" is not among upstream operations of "
-                                + "this operation", returnedFrom.operationName()));
+                        String.format("annotated return-from operation \"%s\" is not among non-void-return upstream "
+                                + "operations of this operation.", returnedFrom.operationName()));
                 if (!candidateParam.getType().isAssignableFrom(msg.getReturnClazz())) {
                     String unableToAssign = String.format("Operation \"%s\" returned %s, which cannot be assigned to "
                             + "type \"%s\".",
