@@ -29,8 +29,17 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
 
     private final Map<String, OperationCompletionMessage> operationCompletionMap;
 
+
+    @VisibleForTesting
+    public WorkflowTraverse(ImmutableAcyclicGraph fakeImmutableAcyclicGraph) {
+        super(fakeImmutableAcyclicGraph);
+        tenantCode = "onlyForTest";
+        localDate = LocalDate.MIN;
+        operationCompletionMap = null;
+    }
+
     // this constructor should only be used package
-    WorkflowTraverse(ImmutableAcyclicGraph immutableAcyclicGraphParam, String tenantCodeParam,
+    public WorkflowTraverse(ImmutableAcyclicGraph immutableAcyclicGraphParam, String tenantCodeParam,
             LocalDate localDateParam) {
         super(immutableAcyclicGraphParam);
 
@@ -78,24 +87,42 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
         return super.visit(graphNode);
     }
 
-    Object[] determineArgsOf(Method method, GraphNode correspondingNode) {
-        Map<String, OperationCompletionMessage> msgsOfParents = correspondingNode.getParentNodes().stream().map(node -> {
-            Optional<OperationCompletionMessage> operationCompletionMessageOptional = getResultOfOperation(node.getGraphNodeId());
-            if (!operationCompletionMessageOptional.isPresent()) {
-                throw new IllegalStateException("prerequisites not fulfilled when trying determining arguments for "
-                        + "method : " + method.getName());
-            }
-            return operationCompletionMessageOptional.get();
-        }).filter(msg -> !msg.getReturnClazz().equals( Void.TYPE)).collect(Collectors.toMap(
-                OperationCompletionMessage::getOperationName, msg -> msg));
+    /**
+     * This method should be private. To be able to test this method, I changed accessibility modifier to be default
+     * @param method method
+     * @param msgsOfParents OperationCompletionMessage keyed by operation name.
+     * @return array of arguments.
+     */
+    @VisibleForTesting
+    Object[] determineArgsOf(Method method, Map<String, OperationCompletionMessage> msgsOfParents) {
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 0) {
             return new Object[0];
         }
 
-        if (msgsOfParents.size() != parameters.length) {
+        if (msgsOfParents.size() < parameters.length) {
             throw new IllegalStateException(String.format("Non-void-return upstream operation number is "
-                    + "%d, while parameter number of this method is %d.", msgsOfParents.size(), parameters.length));
+                    + "%d, while parameter number of this method is %d. MsgOfParents cannot be smaller than number "
+                    + "of parameters", msgsOfParents.size(), parameters.length));
+        }
+
+        boolean alreadyMatched = false;
+        for (OperationCompletionMessage op : msgsOfParents.values()) {
+            for (Parameter parameter : parameters) {
+                if (parameter.isAnnotationPresent(ReturnedFrom.class)) {
+                    continue;
+                }
+                // now parameter is not annotated by @ReturnFrom
+                if (parameter.getType().isAssignableFrom(op.getReturnClazz())) {
+                    if (alreadyMatched) {
+                        String exMsg = String.format("The return type of upstream operation : %s can be assigned "
+                                + "to multiple parameters of method : %s", op.getOperationName(), method.getName());
+                        throw new IllegalStateException(exMsg);
+                    }
+                    alreadyMatched = true;
+                }
+            }
+            alreadyMatched = false;
         }
 
         Object[] result = new Object[parameters.length];
@@ -134,6 +161,19 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
             }
         }
         return result;
+    }
+
+    Object[] determineArgsOf(Method method, GraphNode correspondingNode) {
+        Map<String, OperationCompletionMessage> msgsOfParents = correspondingNode.getParentNodes().stream().map(node -> {
+            Optional<OperationCompletionMessage> operationCompletionMessageOptional = getResultOfOperation(node.getGraphNodeId());
+            if (!operationCompletionMessageOptional.isPresent()) {
+                throw new IllegalStateException("prerequisites not fulfilled when trying determining arguments for "
+                        + "method : " + method.getName());
+            }
+            return operationCompletionMessageOptional.get();
+        }).filter(msg -> !msg.getReturnClazz().equals( Void.TYPE)).collect(Collectors.toMap(
+                OperationCompletionMessage::getOperationName, msg -> msg));
+        return determineArgsOf(method, msgsOfParents);
     }
 
     @Override
