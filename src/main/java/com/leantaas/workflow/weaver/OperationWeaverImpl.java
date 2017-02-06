@@ -11,6 +11,7 @@ import com.google.inject.Injector;
 import com.leantaas.workflow.acyclicgraph.GraphNode;
 import com.leantaas.workflow.acyclicgraph.ImmutableAcyclicGraph;
 import com.leantaas.workflow.annotation.WorkflowOperation;
+import com.leantaas.workflow.flowdefinition.WorkflowArrangementEntry;
 import com.leantaas.workflow.guicemodule.WorkflowModule;
 import com.leantaas.workflow.operations.dto.OperationCompletionMessage;
 import java.io.IOException;

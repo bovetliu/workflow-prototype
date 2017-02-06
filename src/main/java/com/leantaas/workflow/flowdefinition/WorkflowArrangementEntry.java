@@ -1,4 +1,4 @@
-package com.leantaas.workflow.weaver;
+package com.leantaas.workflow.flowdefinition;
 
 import com.amazonaws.util.StringUtils;
 import com.leantaas.workflow.acyclicgraph.GraphEdge;

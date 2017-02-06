@@ -5,7 +5,7 @@ import com.leantaas.workflow.operations.ETLOperations;
 import com.leantaas.workflow.operations.dto.OperationCompletionMessage;
 import com.leantaas.workflow.weaver.OperationWeaver;
 import com.leantaas.workflow.weaver.OperationWeaverImpl;
-import com.leantaas.workflow.weaver.WorkflowArrangementEntry;
+import com.leantaas.workflow.flowdefinition.WorkflowArrangementEntry;
 import com.leantaas.workflow.weaver.WorkflowTraverse;
 import java.time.LocalDate;
 import java.util.Arrays;
