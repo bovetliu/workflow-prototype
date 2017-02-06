@@ -10,7 +10,8 @@ This is a maven project. Do it maven way.
 
 ## Usage
 
-```
+```java
+public class Demo {
     public static void main(String[] args) {
         // we should provide one thread pool for our workflow
         ExecutorService workerThreadPool = Executors.newFixedThreadPool(3);
@@ -44,7 +45,7 @@ This is a maven project. Do it maven way.
 
         } catch (Exception ex) {
             synchronized(App.class) {
-//                ex.printStackTrace();
+                ex.printStackTrace();
             }
         } finally {
             // we have finished traverse, shutdown thread pool
@@ -52,7 +53,7 @@ This is a maven project. Do it maven way.
             timedTrigger.shutdownNow();
         }
     }
-
+}
 ```
 
 ## Contributing
