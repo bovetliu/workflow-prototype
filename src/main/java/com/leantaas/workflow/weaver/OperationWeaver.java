@@ -11,12 +11,12 @@ import java.util.concurrent.ExecutorService;
  */
 public interface OperationWeaver {
 
-    Injector getInjector();
+  Injector getInjector();
 
-    ImmutableAcyclicGraph getImmutableAcyclicGraph();
+  ImmutableAcyclicGraph getImmutableAcyclicGraph();
 
-    WorkflowTraverse createTraverse(String tenantCode, LocalDate localDate);
+  WorkflowTraverse createTraverse(String tenantCode, LocalDate localDate);
 
-    void proceedTraverse(WorkflowTraverse traverse, OperationCompletionMessage completionMsg,
-            ExecutorService threadPool);
+  void proceedTraverse(WorkflowTraverse traverse, OperationCompletionMessage completionMsg,
+      ExecutorService threadPool);
 }

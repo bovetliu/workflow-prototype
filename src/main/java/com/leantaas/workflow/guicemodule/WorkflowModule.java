@@ -15,18 +15,18 @@ import com.leantaas.workflow.operations.impl.MetricsOperationsImpl;
  */
 public class WorkflowModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(ETLOperations.class).to(ETLOperationsImpl.class).asEagerSingleton();
-        bind(MetricsOperations.class).to(MetricsOperationsImpl.class).asEagerSingleton();
-        bind(FakeKinesis.class).asEagerSingleton();
+  @Override
+  protected void configure() {
+    bind(ETLOperations.class).to(ETLOperationsImpl.class).asEagerSingleton();
+    bind(MetricsOperations.class).to(MetricsOperationsImpl.class).asEagerSingleton();
+    bind(FakeKinesis.class).asEagerSingleton();
 
-        OperationCompletionReporter reporter = new OperationCompletionReporter();
-        requestInjection(reporter);
+    OperationCompletionReporter reporter = new OperationCompletionReporter();
+    requestInjection(reporter);
 
-        // Method interceptor, limited search range
-        bindInterceptor(Matchers.inPackage(Package.getPackage("com.leantaas.workflow.operations.impl")),
-                Matchers.annotatedWith(WorkflowOperation.class),
-                reporter);
-    }
+    // Method interceptor, limited search range
+    bindInterceptor(Matchers.inPackage(Package.getPackage("com.leantaas.workflow.operations.impl")),
+        Matchers.annotatedWith(WorkflowOperation.class),
+        reporter);
+  }
 }

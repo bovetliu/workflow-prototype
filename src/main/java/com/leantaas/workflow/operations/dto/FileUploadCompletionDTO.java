@@ -7,34 +7,34 @@ import com.amazonaws.util.StringUtils;
  */
 public class FileUploadCompletionDTO {
 
-    private String tenantName;
-    private String fileS3Url;
+  private String tenantName;
+  private String fileS3Url;
 
-    public FileUploadCompletionDTO(String tenantNameParam, String fileS3UrlParam) {
-        if (StringUtils.isNullOrEmpty(tenantNameParam)){
-            throw new IllegalArgumentException( "tenantName cannot be null or empty");
-        }
-        if (StringUtils.isNullOrEmpty(fileS3UrlParam)){
-            throw new IllegalArgumentException( "fileS3UrlParam cannot be null or empty");
-        }
-        tenantName = tenantNameParam;
-        fileS3Url = fileS3UrlParam;
+  public FileUploadCompletionDTO(String tenantNameParam, String fileS3UrlParam) {
+    if (StringUtils.isNullOrEmpty(tenantNameParam)) {
+      throw new IllegalArgumentException("tenantName cannot be null or empty");
     }
-
-
-    public String getTenantName() {
-        return tenantName;
+    if (StringUtils.isNullOrEmpty(fileS3UrlParam)) {
+      throw new IllegalArgumentException("fileS3UrlParam cannot be null or empty");
     }
+    tenantName = tenantNameParam;
+    fileS3Url = fileS3UrlParam;
+  }
 
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
-    }
 
-    public String getFileS3Url() {
-        return fileS3Url;
-    }
+  public String getTenantName() {
+    return tenantName;
+  }
 
-    public void setFileS3Url(String fileS3Url) {
-        this.fileS3Url = fileS3Url;
-    }
+  public void setTenantName(String tenantName) {
+    this.tenantName = tenantName;
+  }
+
+  public String getFileS3Url() {
+    return fileS3Url;
+  }
+
+  public void setFileS3Url(String fileS3Url) {
+    this.fileS3Url = fileS3Url;
+  }
 }

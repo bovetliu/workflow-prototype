@@ -11,25 +11,25 @@ import org.aopalliance.intercept.MethodInvocation;
 
 public class OperationCompletionReporter implements MethodInterceptor {
 
-    @Inject
-    private FakeKinesis fakeKinesis;
+  @Inject
+  private FakeKinesis fakeKinesis;
 
 
-    @Override
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        Object res = methodInvocation.proceed();
+  @Override
+  public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    Object res = methodInvocation.proceed();
 
-        String simpleClassName = methodInvocation.getMethod().getDeclaringClass().getSimpleName();
-        Method method = methodInvocation.getMethod();
-        WorkflowOperation workflowOperation = methodInvocation.getMethod().getAnnotation(WorkflowOperation.class);
-        String operationName = StringUtils.isNullOrEmpty(workflowOperation.operationName()) ? method.getName()
-                : workflowOperation.operationName();
-        Class<?> returnClazz = method.getReturnType();
-        System.out.println(
-                "[Invocation Intercepting] operation completion reporting for " + simpleClassName + "." + method
-                        .getName() + "(...)\n");
-        OperationCompletionMessage msg = new OperationCompletionMessage(operationName, returnClazz, res);
-        fakeKinesis.put(msg);
-        return res;
-    }
+    String simpleClassName = methodInvocation.getMethod().getDeclaringClass().getSimpleName();
+    Method method = methodInvocation.getMethod();
+    WorkflowOperation workflowOperation = methodInvocation.getMethod().getAnnotation(WorkflowOperation.class);
+    String operationName = StringUtils.isNullOrEmpty(workflowOperation.operationName()) ? method.getName()
+        : workflowOperation.operationName();
+    Class<?> returnClazz = method.getReturnType();
+    System.out.println(
+        "[Invocation Intercepting] operation completion reporting for " + simpleClassName + "." + method
+            .getName() + "(...)\n");
+    OperationCompletionMessage msg = new OperationCompletionMessage(operationName, returnClazz, res);
+    fakeKinesis.put(msg);
+    return res;
+  }
 }

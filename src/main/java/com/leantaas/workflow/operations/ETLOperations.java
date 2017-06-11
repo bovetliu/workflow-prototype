@@ -7,7 +7,7 @@ import com.leantaas.workflow.operations.dto.FileUploadCompletionDTO;
  */
 public interface ETLOperations {
 
-    FileUploadCompletionDTO uploadFileOperation(String fileName);
+  FileUploadCompletionDTO uploadFileOperation(String fileName);
 
-    String processFileOperation(FileUploadCompletionDTO fileUploadCompletionDTO);
+  String processFileOperation(FileUploadCompletionDTO fileUploadCompletionDTO);
 }

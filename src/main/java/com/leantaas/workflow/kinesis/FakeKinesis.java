@@ -11,29 +11,29 @@ import javax.inject.Singleton;
 @Singleton
 public class FakeKinesis {
 
-    public FakeKinesis() {
+  private BlockingQueue<OperationCompletionMessage> blockingQueue
+      = new ArrayBlockingQueue<OperationCompletionMessage>(40);
+
+  public FakeKinesis() {
+  }
+
+  public void put(OperationCompletionMessage msg) {
+    try {
+
+      blockingQueue.put(msg);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
     }
+  }
 
-    private BlockingQueue<OperationCompletionMessage> blockingQueue
-            = new ArrayBlockingQueue<OperationCompletionMessage>(40);
-
-    public void put(OperationCompletionMessage msg) {
-        try {
-
-            blockingQueue.put(msg);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+  public OperationCompletionMessage take() {
+    try {
+      return blockingQueue.take();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
     }
-
-    public OperationCompletionMessage take() {
-        try {
-            return blockingQueue.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
+  }
 
 }

@@ -8,9 +8,10 @@ import java.lang.annotation.Target;
 /**
  * Created by boweiliu on 2/4/17.
  */
-@Retention(RetentionPolicy.RUNTIME) @Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
 public @interface ReturnedFrom {
 
-    // required field
-    String operationName();
+  // required field
+  String operationName();
 }
