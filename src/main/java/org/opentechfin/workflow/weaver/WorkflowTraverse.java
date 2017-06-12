@@ -38,7 +38,7 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
     tenantCode = "onlyForTest";
     localDate = LocalDate.MIN;
     operationCompletionMap = null;
-    traveseId = UUID.fromString("efbjunit-a240-4802-82da-ded3a771a234");
+    traveseId = UUID.fromString("c0358986-200e-4a54-b11b-d78e05e3a5e0");
   }
 
   // this constructor should only be used package
