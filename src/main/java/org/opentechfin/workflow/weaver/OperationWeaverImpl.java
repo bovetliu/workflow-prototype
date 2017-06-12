@@ -51,15 +51,15 @@ public class OperationWeaverImpl implements OperationWeaver {
     for (GraphNode graphNode : immutableAcyclicGraph.getNodes()) {
       operationNameVsGraphNode.put(graphNode.getGraphNodeId(), graphNode);
     }
-
-    injector = Guice.createInjector(new WorkflowModule());
+    WorkflowModule workflowModule = new WorkflowModule();
+    injector = Guice.createInjector(workflowModule);
 
     operationNameVsObjMethodEntry = HashBiMap.create();
     try {
       ClassPath classPath = ClassPath.from(OperationWeaverImpl.class.getClassLoader());
       //TODO(Bowei) make it configurable
       ImmutableSet<ClassInfo> topLevelClasses =
-          classPath.getTopLevelClasses("org.opentechfin.workflow.operations.impl");
+          classPath.getTopLevelClasses(workflowModule.OPERATION_PACKAGE);
       for (ClassPath.ClassInfo classInfo : topLevelClasses) {
         Class<?> opClazz = classInfo.load();
         Map<String, Method> tempMapStoringAnnotatedMethods = new TreeMap<>();
