@@ -27,9 +27,9 @@ This is a maven project. Do it maven way.
   on these workflow arrangements in the `OperationWeaver`
 4. Use `OperationWeaver` to create a `WorkflowTraverse`.
 5. Invoke all methods whose indegrees are zero. Their returned object will be put into the queue,
-  by the method interceptor.
+  by the `OperationCompletionInterceptor`.
 6. keep checking `workflowTraverse.isTraverseFinished()`, if it has not finished, 
-  take a `OperationCompletionMessage` from the queue, and proceed the traverse by calling
+  take an `OperationCompletionMessage` from the queue, and proceed the traverse by calling
   `workflowWeaver.proceedTraverse(workflowTraverse, 
                        operationCompletionMessage, 
                        workerThreadPool)`. 
