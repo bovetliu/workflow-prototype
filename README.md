@@ -74,9 +74,7 @@ public class Demo {
                     workerThreadPool);
             }
         } catch (Exception ex) {
-            synchronized(App.class) {
-                ex.printStackTrace();
-            }
+            ex.printStackTrace();
         } finally {
             // we have finished traverse, shutdown thread pool
             workerThreadPool.shutdown();
