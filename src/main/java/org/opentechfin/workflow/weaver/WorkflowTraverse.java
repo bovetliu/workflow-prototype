@@ -1,6 +1,5 @@
 package org.opentechfin.workflow.weaver;
 
-import com.amazonaws.util.StringUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import org.opentechfin.workflow.acyclicgraph.AcyclicGraphTraverse;
@@ -18,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.opentechfin.workflow.utils.StringUtils;
 
 /**
  * WorkflowTraverse is used only inside package
@@ -186,8 +186,7 @@ public class WorkflowTraverse extends AcyclicGraphTraverse {
       return operationCompletionMessageOptional.get();
     }).filter(msg -> !msg.getReturnClazz().equals(Void.TYPE)).collect(Collectors.toMap(
         OperationCompletionMessage::getOperationName, msg -> msg));
-    Object[] res = determineArgsOf(method, msgsOfParents);
-    return res;
+    return determineArgsOf(method, msgsOfParents);
   }
 
   @Override

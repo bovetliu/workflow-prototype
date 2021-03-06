@@ -1,6 +1,5 @@
 package org.opentechfin.workflow.methodinterceptor;
 
-import com.amazonaws.util.StringUtils;
 import org.opentechfin.workflow.annotation.WorkflowOperation;
 import org.opentechfin.workflow.kinesis.FakeKinesis;
 import org.opentechfin.workflow.operations.dto.OperationCompletionMessage;
@@ -8,6 +7,7 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.opentechfin.workflow.utils.StringUtils;
 
 public class OperationCompletionInterceptor implements MethodInterceptor {
 

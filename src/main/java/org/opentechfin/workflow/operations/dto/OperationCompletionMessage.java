@@ -1,6 +1,7 @@
 package org.opentechfin.workflow.operations.dto;
 
-import com.amazonaws.util.StringUtils;
+
+import org.opentechfin.workflow.utils.StringUtils;
 
 /**
  */

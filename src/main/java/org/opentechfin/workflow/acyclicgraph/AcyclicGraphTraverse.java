@@ -1,6 +1,5 @@
 package org.opentechfin.workflow.acyclicgraph;
 
-import com.amazonaws.annotation.ThreadSafe;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Class traverse logic of one {@link ImmutableAcyclicGraph} traverse. Usually works with queues.
  */
-@ThreadSafe
 public class AcyclicGraphTraverse {
 
   protected final ImmutableAcyclicGraph immutableAcyclicGraph;

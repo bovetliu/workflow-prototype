@@ -45,11 +45,11 @@
     </dependency>
 
     <!--Kinesis JDK, KCL, KPL-->
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-kinesis</artifactId>
-      <version>1.11.73</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.amazonaws</groupId>-->
+<!--      <artifactId>aws-java-sdk-kinesis</artifactId>-->
+<!--      <version>1.11.73</version>-->
+<!--    </dependency>-->
 
     <!--<dependency>-->
       <!--<groupId>com.amazonaws</groupId>-->

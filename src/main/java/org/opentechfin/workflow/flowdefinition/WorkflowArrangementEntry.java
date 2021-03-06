@@ -1,6 +1,5 @@
 package org.opentechfin.workflow.flowdefinition;
 
-import com.amazonaws.util.StringUtils;
 import org.opentechfin.workflow.acyclicgraph.GraphEdge;
 import org.opentechfin.workflow.acyclicgraph.GraphNode;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.opentechfin.workflow.utils.StringUtils;
 
 public class WorkflowArrangementEntry {
 

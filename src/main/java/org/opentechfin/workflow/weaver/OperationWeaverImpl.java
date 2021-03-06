@@ -1,6 +1,5 @@
 package org.opentechfin.workflow.weaver;
 
-import com.amazonaws.util.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
@@ -24,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import javax.inject.Singleton;
+import org.opentechfin.workflow.utils.StringUtils;
 
 /**
  * This class is default implementation
