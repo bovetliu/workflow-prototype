@@ -6,6 +6,8 @@ import org.opentechfin.workflow.operations.dto.FileUploadCompletionDTO;
 import javax.inject.Inject;
 
 /**
+ * In {@link org.opentechfin.workflow.guicemodule.WorkflowModule}, this class is configured to be
+ * singleton instance of interface ETLOperations
  */
 public class ETLOperationsImpl implements ETLOperations {
 

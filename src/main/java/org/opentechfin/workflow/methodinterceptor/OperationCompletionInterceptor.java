@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-public class OperationCompletionReporter implements MethodInterceptor {
+public class OperationCompletionInterceptor implements MethodInterceptor {
 
   @Inject
   private FakeKinesis fakeKinesis;

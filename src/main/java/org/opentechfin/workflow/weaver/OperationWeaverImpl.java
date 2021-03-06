@@ -60,6 +60,8 @@ public class OperationWeaverImpl implements OperationWeaver {
       //TODO(Bowei) make it configurable
       ImmutableSet<ClassInfo> topLevelClasses =
           classPath.getTopLevelClasses(workflowModule.OPERATION_PACKAGE);
+      // attempting to populate operationNameVsObjMethodEntry
+      // it should match operationNameVsGraphNode
       for (ClassPath.ClassInfo classInfo : topLevelClasses) {
         Class<?> opClazz = classInfo.load();
         Map<String, Method> tempMapStoringAnnotatedMethods = new TreeMap<>();
@@ -84,6 +86,17 @@ public class OperationWeaverImpl implements OperationWeaver {
           }
         }
         System.out.println("processed class : " + classInfo.getName() + "\n");
+      }
+      if (operationNameVsObjMethodEntry.size() != operationNameVsGraphNode.size()) {
+        String errMsg = String.format("operationNameVsObjMethodEntry.size(): %d should be equal to "
+            + "operationNameVsGraphNode.size(): %d", operationNameVsObjMethodEntry.size(),
+            operationNameVsGraphNode.size());
+        throw new IllegalStateException(errMsg);
+      }
+      if (!operationNameVsObjMethodEntry.keySet().stream().allMatch(
+          operationNameVsGraphNode::containsKey)) {
+        throw new IllegalStateException(
+            "Keys do not match: operationNameVsObjMethodEntry vs operationNameVsGraphNode");
       }
       System.out.println("[Operation Weaver] Finished build associations between operation name and methods.");
     } catch (IOException e) {

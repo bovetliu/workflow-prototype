@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  *
  */
-public class OperationCompletionReporterTest {
+public class OperationCompletionInterceptorTest {
 
 
   private void testVoidReturnType() {
@@ -19,7 +19,7 @@ public class OperationCompletionReporterTest {
   @Test
   public void testVoidReturnTypeMethod()
       throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    Method testPrintMethod = OperationCompletionReporterTest.class.getDeclaredMethod("testVoidReturnType");
+    Method testPrintMethod = OperationCompletionInterceptorTest.class.getDeclaredMethod("testVoidReturnType");
     Assert.assertEquals(Void.TYPE, testPrintMethod.getReturnType());
     testPrintMethod.invoke(this);
   }

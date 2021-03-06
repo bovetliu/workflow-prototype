@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -57,7 +58,8 @@ public class GraphUtil {
       }
       for (GraphNode child : children) {
         inDegreeOf.compute(child, (stillThisChildNode, oldIndegree) -> {
-          Integer newIndegree = oldIndegree - 1;
+          Objects.requireNonNull(oldIndegree, "oldIndegree should not be null");
+          int newIndegree = oldIndegree - 1;
           if (newIndegree == 0) {
             queue.offer(stillThisChildNode);
           }

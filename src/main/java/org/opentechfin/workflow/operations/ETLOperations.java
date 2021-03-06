@@ -7,7 +7,7 @@ import org.opentechfin.workflow.operations.dto.FileUploadCompletionDTO;
  */
 public interface ETLOperations {
 
-  FileUploadCompletionDTO uploadFileOperation(String fileName);
+  FileUploadCompletionDTO   uploadFileOperation(String fileName);
 
   String processFileOperation(FileUploadCompletionDTO fileUploadCompletionDTO);
 }
